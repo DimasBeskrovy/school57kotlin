@@ -8,7 +8,7 @@
  */
 class VisibilityProblem {
 
-    private var running = true
+    private var running = AtomicBoolean(true)
 
     /**
      * Создает и возвращает поток writer.
@@ -23,7 +23,7 @@ class VisibilityProblem {
                 Thread.yield()
             }
 
-            running = false
+            running.set(false)
             println("Writer: установил running = false (изменение может быть не видно)")
         }
     }
@@ -38,7 +38,7 @@ class VisibilityProblem {
             println("Reader: начал работу (ждет running = false)")
 
             while (running) {
-
+                Thread.yield()
             }
 
             println("Reader: завершил работу (увидел running = false)")

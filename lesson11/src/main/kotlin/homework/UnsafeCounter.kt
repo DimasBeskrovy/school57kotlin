@@ -13,21 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger
  * что приводит к потере некоторых инкрементов из-за race condition.
  */
 class UnsafeCounter {
-
-    private var value = 0
-
+    private val value = AtomicInteger(0)
     suspend fun increment() {
         delay(1)
-        value++
+        value.incrementAndGet()
     }
-
-    fun getValue(): Int = value
-
+    fun getValue(): Int = value.get()
     suspend fun runConcurrentIncrements(
         coroutineCount: Int = 10,
         incrementsPerCoroutine: Int = 1000
     ): Int = coroutineScope {
-
         val jobs = List(coroutineCount) {
             launch(Dispatchers.Default) {
                 repeat(incrementsPerCoroutine) {
@@ -35,9 +30,7 @@ class UnsafeCounter {
                 }
             }
         }
-
         jobs.joinAll()
-
         getValue()
     }
 }
