@@ -14,4 +14,7 @@ suspend fun <T, R> parallelTransform(
     transform: suspend (T) -> R
 ): List<R> {
     TODO("Реализуйте параллельное преобразование с использованием async/await")
+    items.map { item ->
+        async { transform(item) }
+    }.awaitAll()
 }
